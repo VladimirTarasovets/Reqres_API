@@ -5,10 +5,13 @@ import models.get.UserData;
 import models.post.Register;
 import models.post.SuccessReg;
 import models.post.UnSuccessReg;
+import models.put.UserTime;
+import models.put.UserTimeResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import utils.Specification;
 
+import java.time.Clock;
 import java.util.List;
 
 import static endpoints.EndPoint.*;
@@ -95,5 +98,22 @@ public class ReqresTests {
                 .when()
                 .delete(DELETE_USER)
                 .then().log().all();
+    }
+
+    @Test
+    public void timeTest(){
+        Specification.installSpecification(Specification.requestSpec(), Specification.responseSpecOK200());
+
+        UserTime user = new UserTime("morpheus", "zion resident");
+        UserTimeResponse response = given()
+                .body(user)
+                .when()
+                .put(UPDATE)
+                .then().log().all()
+                .extract().as(UserTimeResponse.class);
+
+        String currentTime = Clock.systemUTC().instant().toString().substring(0,10);
+
+        Assertions.assertEquals(currentTime, response.getUpdatedAt().substring(0,10));
     }
 }

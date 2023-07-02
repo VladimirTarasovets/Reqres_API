@@ -1,5 +1,6 @@
 package tests;
 
+import models.get.ColorsData;
 import models.get.UserData;
 import models.post.Register;
 import models.post.SuccessReg;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import utils.Specification;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static endpoints.EndPoint.*;
 import static io.restassured.RestAssured.given;
@@ -21,7 +23,7 @@ public class Tests {
 
         List<UserData> users = given()
                 .when()
-                .get(GET_STATUS)
+                .get(LIST_USERS)
                 .then().log().all()
                 .extract().body().jsonPath().getList("data", UserData.class);
 
@@ -37,7 +39,7 @@ public class Tests {
     }
 
     @Test
-    public void successRegister() {
+    public void successRegisterTest() {
         Specification.installSpecification(Specification.requestSpec(), Specification.responseSpecOK200());
 
         Integer id = 4;
@@ -56,7 +58,7 @@ public class Tests {
     }
 
     @Test
-    public void unSuccessRegister() {
+    public void unSuccessRegisterTest() {
         Specification.installSpecification(Specification.requestSpec(), Specification.responseSpecOK400());
 
         Register user = new Register("sydney@fife", "");
@@ -68,5 +70,21 @@ public class Tests {
                 .extract().as(UnSuccessReg.class);
 
         Assertions.assertEquals("Missing password", unSuccessReg.getError());
+    }
+
+    @Test
+    public void sortedYearsTest(){
+        Specification.installSpecification(Specification.requestSpec(), Specification.responseSpecOK200());
+
+        List<ColorsData> colors = given()
+                .when()
+                .get(LIST_RESOURCE)
+                .then().log().all()
+                .extract().body().jsonPath().getList("data", ColorsData.class);
+
+        List<Integer> years = colors.stream().map(ColorsData::getYear).toList();
+        List<Integer> sortYears = years.stream().sorted().toList();
+
+        Assertions.assertEquals(sortYears, years);
     }
 }

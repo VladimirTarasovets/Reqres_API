@@ -1,9 +1,9 @@
 package tests;
 
-import endpoints.EndPoint;
-import models.UserData;
+import models.get.UserData;
 import models.post.Register;
 import models.post.SuccessReg;
+import models.post.UnSuccessReg;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import utils.Specification;
@@ -13,10 +13,10 @@ import java.util.List;
 import static endpoints.EndPoint.*;
 import static io.restassured.RestAssured.given;
 
-public class GetTest {
+public class Tests {
 
     @Test
-    public void checkAvatarAndIdTest (){
+    public void checkAvatarAndIdTest() {
         Specification.installSpecification(Specification.requestSpec(), Specification.responseSpecOK200());
 
         List<UserData> users = given()
@@ -37,7 +37,7 @@ public class GetTest {
     }
 
     @Test
-    public void successRegister (){
+    public void successRegister() {
         Specification.installSpecification(Specification.requestSpec(), Specification.responseSpecOK200());
 
         Integer id = 4;
@@ -53,5 +53,20 @@ public class GetTest {
 
         Assertions.assertEquals(id, successReg.getId());
         Assertions.assertEquals(token, successReg.getToken());
+    }
+
+    @Test
+    public void unSuccessRegister() {
+        Specification.installSpecification(Specification.requestSpec(), Specification.responseSpecOK400());
+
+        Register user = new Register("sydney@fife", "");
+        UnSuccessReg unSuccessReg = given()
+                .body(user)
+                .when()
+                .post(REGISTER)
+                .then().log().all()
+                .extract().as(UnSuccessReg.class);
+
+        Assertions.assertEquals("Missing password", unSuccessReg.getError());
     }
 }

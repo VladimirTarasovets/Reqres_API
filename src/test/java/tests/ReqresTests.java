@@ -10,15 +10,14 @@ import org.junit.jupiter.api.Test;
 import utils.Specification;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static endpoints.EndPoint.*;
 import static io.restassured.RestAssured.given;
 
-public class Tests {
+public class ReqresTests {
 
     @Test
-    public void checkAvatarAndIdTest() {
+    public void checkAvatarAndIdTest(){
         Specification.installSpecification(Specification.requestSpec(), Specification.responseSpecOK200());
 
         List<UserData> users = given()
@@ -39,7 +38,7 @@ public class Tests {
     }
 
     @Test
-    public void successRegisterTest() {
+    public void successRegisterTest(){
         Specification.installSpecification(Specification.requestSpec(), Specification.responseSpecOK200());
 
         Integer id = 4;
@@ -58,7 +57,7 @@ public class Tests {
     }
 
     @Test
-    public void unSuccessRegisterTest() {
+    public void unSuccessRegisterTest(){
         Specification.installSpecification(Specification.requestSpec(), Specification.responseSpecOK400());
 
         Register user = new Register("sydney@fife", "");
@@ -86,5 +85,15 @@ public class Tests {
         List<Integer> sortYears = years.stream().sorted().toList();
 
         Assertions.assertEquals(sortYears, years);
+    }
+
+    @Test
+    public void deleteUserTest(){
+        Specification.installSpecification(Specification.requestSpec(), Specification.responseSpecStatus(204));
+
+        given()
+                .when()
+                .delete(DELETE_USER)
+                .then().log().all();
     }
 }

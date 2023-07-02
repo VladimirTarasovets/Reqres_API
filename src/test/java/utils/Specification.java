@@ -15,10 +15,7 @@ public class Specification {
         return new RequestSpecBuilder()
                 .setBaseUri(EndPoint.BASE_URI)
                 .setContentType(ContentType.JSON)
-                .log(LogDetail.METHOD)
-                .log(LogDetail.URI)
-                .log(LogDetail.HEADERS)
-                .log(LogDetail.BODY)
+                .log(LogDetail.ALL)
                 .build();
     }
 

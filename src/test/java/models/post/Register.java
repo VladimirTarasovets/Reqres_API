@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Register {
-    private Integer id;
-    private String token;
+    private String email;
+    private String password;
 }

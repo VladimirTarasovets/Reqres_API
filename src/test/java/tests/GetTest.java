@@ -1,13 +1,16 @@
 package tests;
 
+import endpoints.EndPoint;
 import models.UserData;
+import models.post.Register;
+import models.post.SuccessReg;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import utils.Specification;
 
 import java.util.List;
 
-import static endpoints.EndPoint.GET_STATUS;
+import static endpoints.EndPoint.*;
 import static io.restassured.RestAssured.given;
 
 public class GetTest {
@@ -28,12 +31,27 @@ public class GetTest {
 
         List<String> avatars = users.stream().map(UserData::getAvatar).toList();
         List<String> ids = users.stream().map(x->x.getId().toString()).toList();
-        for(int i =0; i<avatars.size(); i++)
+
+        for(int i = 0; i < avatars.size(); i++)
             Assertions.assertTrue(avatars.get(i).contains(ids.get(i)));
     }
 
     @Test
     public void successRegister (){
+        Specification.installSpecification(Specification.requestSpec(), Specification.responseSpecOK200());
 
+        Integer id = 4;
+        String token = "QpwL5tke4Pnpja7X4";
+
+        Register user = new Register("eve.holt@reqres.in", "pistol");
+        SuccessReg successReg = given()
+                .body(user)
+                .when()
+                .post(REGISTER)
+                .then().log().all()
+                .extract().as(SuccessReg.class);
+
+        Assertions.assertEquals(id, successReg.getId());
+        Assertions.assertEquals(token, successReg.getToken());
     }
 }
